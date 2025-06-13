@@ -20,7 +20,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::middleware(['web', 'auth', 'role:admin|pegawai'])
+        Route::middleware(['web', 'auth', 'role404:admin,pegawai'])
             ->group(base_path('routes/admin.php'));
 
         Route::middleware(['web', 'auth'])

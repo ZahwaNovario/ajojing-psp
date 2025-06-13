@@ -14,12 +14,12 @@
             <span class="pc-mtext">Dashboard</span>
           </a>
         </li>
-        {{-- <li class="pc-item">
-          <a href="{{route('barang')}}" class="pc-link">
+        <li class="pc-item">
+          <a href="{{route('barang.index')}}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-clipboard-list"></i></span>
             <span class="pc-mtext">Barang</span>
           </a>
-        </li> --}}
+        </li>
 
         <li class="pc-item pc-caption">
           <label>UI Components</label>
