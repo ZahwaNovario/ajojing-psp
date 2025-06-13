@@ -102,23 +102,23 @@ class BarangController extends Controller
         //
     }
 
-    public function uploadImage(Request $request, $id)
-    {
-        $request->validate([
-            'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    // public function uploadImage(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    //     ]);
 
-        $barang = Barang::findOrFail($id);
+    //     $barang = Barang::findOrFail($id);
 
-        if ($request->hasFile('gambar')) {
-            foreach ($request->file('gambar') as $file) {
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs("barang/{$barang->id}", $filename, 'public');
-            }
-        }
+    //     if ($request->hasFile('gambar')) {
+    //         foreach ($request->file('gambar') as $file) {
+    //             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+    //             $file->storeAs("barang/{$barang->id}", $filename, 'public');
+    //         }
+    //     }
 
-        return back()->with('success', 'Gambar berhasil diupload.');
-    }
+    //     return back()->with('success', 'Gambar berhasil diupload.');
+    // }
 
 
     public function deleteImage($id, $filename)

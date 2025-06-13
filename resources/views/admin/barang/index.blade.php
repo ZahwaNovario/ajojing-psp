@@ -2,6 +2,33 @@
 
 @section('content')
     <div class="container">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('success') || session('error'))
+            <script>
+                setTimeout(() => {
+                    const alert = document.querySelector('.alert');
+                    if (alert) {
+                        let bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                        bsAlert.close();
+                    }
+                }, 4000);
+            </script>
+        @endif
+
+
         <h4 class="mb-3">Daftar Barang</h4>
 
         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createBarangModal">
@@ -117,19 +144,15 @@
                                             <label>Harga</label>
                                             <input type="number" name="harga" class="form-control" required>
                                         </div>
-                                        <div class="mb-3">
-                                            <label>Tambah Gambar</label>
-                                            <div id="gambarInputsEdit{{ $barang->id }}">
-                                                <div class="input-group mb-2">
-                                                    <input type="file" name="gambar[]" class="form-control">
-                                                    <button type="button" class="btn btn-outline-danger"
-                                                        onclick="this.parentElement.remove()">✖</button>
-                                                </div>
+                                        <div id="gambarInputsCreate">
+                                            <div class="input-group mb-2">
+                                                <input type="file" name="gambar[]" class="form-control" accept="image/*">
+                                                <button type="button" class="btn btn-outline-danger"
+                                                    onclick="removeInput(this, 'gambarInputsCreate')">✖</button>
                                             </div>
-                                            <button type="button" class="btn btn-sm btn-secondary"
-                                                onclick="addInputWithRemove('gambarInputsEdit{{ $barang->id }}')">+
-                                                Tambah Gambar</button>
                                         </div>
+                                        <button type="button" class="btn btn-sm btn-secondary"
+                                            onclick="addInputWithRemove('gambarInputsCreate')">+ Tambah Gambar</button>
                                     </div>
                                     <div class="modal-footer">
                                         <button class="btn btn-primary">Simpan</button>
@@ -143,7 +166,8 @@
                     <div class="modal fade" id="editModal{{ $barang->id }}" tabindex="-1">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
-                                <form action="{{ route('barang.update', $barang->id) }}" method="POST">
+                                <form action="{{ route('barang.update', $barang->id) }}" method="POST"
+                                    enctype="multipart/form-data">
                                     @csrf @method('PUT')
                                     <div class="modal-header">
                                         <h5 class="modal-title">Edit Barang</h5>
@@ -169,6 +193,17 @@
                                             <input type="number" name="harga" value="{{ $barang->harga }}"
                                                 class="form-control" required>
                                         </div>
+                                        <div id="gambarInputsEdit{{ $barang->id }}">
+                                            <div class="input-group mb-2">
+                                                <input type="file" name="gambar[]" class="form-control"
+                                                    accept="image/*">
+                                                <button type="button" class="btn btn-outline-danger"
+                                                    onclick="removeInput(this, 'gambarInputsEdit{{ $barang->id }}')">✖</button>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-secondary"
+                                            onclick="addInputWithRemove('gambarInputsEdit{{ $barang->id }}')">+ Tambah
+                                            Gambar</button>
                                     </div>
                                     <div class="modal-footer">
                                         <button class="btn btn-primary">Update</button>
@@ -183,14 +218,16 @@
     </div>
 
     <script>
-        function addInputWithRemove(targetId) {
-            const container = document.getElementById(targetId);
+        function addInputWithRemove(containerId) {
+            const container = document.getElementById(containerId);
+
             const wrapper = document.createElement('div');
             wrapper.classList.add('input-group', 'mb-2');
 
             const input = document.createElement('input');
             input.type = 'file';
             input.name = 'gambar[]';
+            input.accept = 'image/*';
             input.classList.add('form-control');
 
             const btn = document.createElement('button');
@@ -201,13 +238,22 @@
                 if (container.childElementCount > 1) {
                     wrapper.remove();
                 } else {
-                    alert('Minimal satu input gambar harus ada.');
+                    alert('Minimal satu input harus ada.');
                 }
             };
 
             wrapper.appendChild(input);
             wrapper.appendChild(btn);
             container.appendChild(wrapper);
+        }
+
+        function removeInput(button, containerId) {
+            const container = document.getElementById(containerId);
+            if (container.childElementCount > 1) {
+                button.parentElement.remove();
+            } else {
+                alert('Minimal satu input harus ada.');
+            }
         }
     </script>
 @endsection
