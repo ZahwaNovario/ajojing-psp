@@ -3,15 +3,14 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Home | Mantis Bootstrap 5 Admin Template</title>
+    <title>Dashboard | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Mantis is made using Bootstrap 5 design framework.">
     <meta name="keywords" content="Mantis, Bootstrap 5, Admin Template, CRM, CMS">
     <meta name="author" content="CodedThemes">
 
-    <!-- Favicon -->
-    <link rel="icon" href="{{ asset('assets/images/favicon.svg') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/images/logo-ajojing.png') }}" type="image">
 
     <!-- Google Font -->
     <link rel="stylesheet"
