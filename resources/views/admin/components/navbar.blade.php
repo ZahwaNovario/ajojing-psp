@@ -1,7 +1,7 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="{{route('dashboard')}}" class="b-brand text-primary">
+      <a href="{{route('home')}}" class="b-brand text-primary">
         <!-- ========   Change your logo from here   ============ -->
         <img src="../assets/images/logo-ajojing.png" class="img-fluid logo-lg" alt="">
       </a>

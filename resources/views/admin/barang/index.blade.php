@@ -177,30 +177,29 @@
 
 
     @push('scripts')
-        {{-- ========================================================================= --}}
-        {{-- JAVASCRIPT untuk Modal Dinamis --}}
-        {{-- ========================================================================= --}}
         <script>
+            /**
+             * @deskripsi Fungsi ini untuk menambah input file baru secara dinamis.
+             * @param {string} containerId - ID dari div yang akan menampung input baru.
+             */
+            function addNewImageInput(containerId) {
+                const container = document.getElementById(containerId);
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('input-group', 'mb-2');
+                wrapper.innerHTML = `
+            <input type="file" name="gambar[]" class="form-control" accept="image/*">
+            <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">
+                <i class="ti ti-trash"></i>
+            </button>
+        `;
+                container.appendChild(wrapper);
+            }
+
+            /**
+             * Menjalankan semua script setelah seluruh struktur halaman (DOM) selesai dimuat.
+             * Ini adalah praktik terbaik untuk menghindari error 'element not found'.
+             */
             document.addEventListener('DOMContentLoaded', function() {
-
-                // --- Script untuk Modal Edit Dinamis ---
-                const editModalEl = document.getElementById('editBarangModal');
-                if (editModalEl) {
-                    editModalEl.addEventListener('show.bs.modal', function(event) {
-                        const button = event.relatedTarget;
-                        const barang = JSON.parse(button.getAttribute('data-barang'));
-                        const action = button.getAttribute('data-action');
-
-                        const form = editModalEl.querySelector('#editBarangForm');
-                        form.action = action;
-                        form.querySelector('#editId').value = barang.id;
-                        form.querySelector('#editNama').value = barang.nama;
-                        form.querySelector('#editDeskripsi').value = barang.deskripsi;
-                        form.querySelector('#editStok').value = barang.stok;
-                        form.querySelector('#editHarga').value = barang.harga;
-                    });
-                }
-
                 // --- Script untuk Modal Lihat Gambar Dinamis ---
                 const imagesModalEl = document.getElementById('showImagesModal');
                 if (imagesModalEl) {
@@ -239,73 +238,29 @@
                         }
                     });
                 }
-            });
-        </script>
-        <script>
-            // Script untuk konfirmasi hapus dengan SweetAlert2
-            document.addEventListener('DOMContentLoaded', function() {
-                // 1. Dapatkan semua tombol dengan kelas .btn-delete
-                const deleteButtons = document.querySelectorAll('.btn-delete');
-                deleteButtons.forEach(button => {
-                    button.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        const form = this.closest('form');
-
-                        const swalWithBootstrapButtons = Swal.mixin({
-                            customClass: {
-                                confirmButton: "btn btn-danger mx-2", // Saya ubah jadi merah untuk tombol hapus
-                                cancelButton: "btn btn-secondary mx-2"
-                            },
-                            buttonsStyling: false
-                        });
-
-                        swalWithBootstrapButtons.fire({
-                            title: 'Apakah Anda yakin?',
-                            text: "Data yang dihapus tidak dapat dikembalikan!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Ya, hapus!',
-                            cancelButtonText: 'Batal',
-                            reverseButtons: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    });
-                });
-
-            });
-        </script>
-
-        <script>
-            // Fungsi untuk menambah input file baru (bisa dipakai di modal create & edit)
-            function addNewImageInput(containerId) {
-                const container = document.getElementById(containerId);
-                const wrapper = document.createElement('div');
-                wrapper.classList.add('input-group', 'mb-2');
-                wrapper.innerHTML = `
-        <input type="file" name="gambar[]" class="form-control" accept="image/*">
-        <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">
-            <i class="ti ti-trash"></i>
-        </button>
-    `;
-                container.appendChild(wrapper);
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
                 const editModalEl = document.getElementById('editBarangModal');
+                // 'Flag' untuk menandai apakah ada perubahan (penghapusan gambar) di dalam modal.
+                let imagesHaveChanged = false;
+
+                // Cek apakah elemen modal edit ada di halaman ini.
                 if (editModalEl) {
+
+                    // Menjalankan kode setiap kali modal edit AKAN DITAMPILKAN.
                     editModalEl.addEventListener('show.bs.modal', function(event) {
+                        // Reset flag ke false setiap kali modal dibuka.
+                        imagesHaveChanged = false;
+
+                        // Mengambil data dari tombol yang di-klik.
                         const button = event.relatedTarget;
                         const barang = JSON.parse(button.getAttribute('data-barang'));
                         const action = button.getAttribute('data-action');
 
+                        // Menemukan elemen-elemen form di dalam modal.
                         const form = editModalEl.querySelector('#editBarangForm');
                         const existingImagesContainer = editModalEl.querySelector('#existingImagesContainer');
                         const newImageInputsContainer = editModalEl.querySelector('#newImageInputsContainer');
 
-                        // Isi form dengan data barang
+                        // Mengisi form dengan data barang yang akan diedit.
                         form.action = action;
                         form.querySelector('#editId').value = barang.id;
                         form.querySelector('#editNama').value = barang.nama;
@@ -313,31 +268,24 @@
                         form.querySelector('#editStok').value = barang.stok;
                         form.querySelector('#editHarga').value = barang.harga;
 
-                        // Kosongkan kontainer gambar sebelum diisi ulang
+                        // Kosongkan kontainer gambar dari data sebelumnya.
                         existingImagesContainer.innerHTML = '';
                         newImageInputsContainer.innerHTML = '';
 
-                        // Tampilkan gambar yang sudah ada
+                        // Buat dan tampilkan daftar gambar yang sudah ada.
                         if (barang.images && barang.images.length > 0) {
                             barang.images.forEach(image => {
                                 const filename = image.path.split('/').pop();
-
                                 const imgWrapper = document.createElement('div');
-                                imgWrapper.classList.add('col-auto');
+                                imgWrapper.classList.add('col-auto',
+                                    'image-wrapper'); // Beri kelas untuk dihitung
                                 imgWrapper.setAttribute('id', `image-wrapper-${image.id}`);
                                 imgWrapper.innerHTML = `
-                        <div class="position-relative">
-                <img src="/storage/${image.path}" class="img-thumbnail" width="100" height="100" style="object-fit: cover;">
-                <button type="button"
-                        class="btn btn-sm btn-danger rounded-circle position-absolute top-0 end-0 mt-n1 me-n1 btn-delete-existing-image"
-                        data-image-id="${image.id}"
-                        data-barang-id="${barang.id}"
-                        data-filename="${filename}"
-                        title="Hapus Gambar Ini">
-                    &times;
-                </button>
-            </div>
-                    `;
+                            <div class="position-relative">
+                                <img src="/storage/${image.path}" class="img-thumbnail" width="100" height="100" style="object-fit: cover;">
+                                <button type="button" class="btn btn-sm btn-danger rounded-circle position-absolute top-0 end-0 mt-n1 me-n1 btn-delete-existing-image" data-image-id="${image.id}" data-barang-id="${barang.id}" data-filename="${filename}" title="Hapus Gambar Ini">&times;</button>
+                            </div>
+                        `;
                                 existingImagesContainer.appendChild(imgWrapper);
                             });
                         } else {
@@ -345,16 +293,41 @@
                                 '<p class="col text-muted small">Belum ada gambar.</p>';
                         }
                     });
+
+                    // Menjalankan kode setiap kali modal edit SUDAH DITUTUP.
+                    editModalEl.addEventListener('hidden.bs.modal', function() {
+                        // Jika flag 'imagesHaveChanged' bernilai true, refresh halaman.
+                        if (imagesHaveChanged) {
+                            location.reload();
+                        }
+                    });
                 }
 
-                // Event listener untuk menghapus gambar dengan AJAX
+                // Event listener utama untuk seluruh dokumen, mencari aksi klik.
                 document.addEventListener('click', function(event) {
-                    if (event.target.matches('.btn-delete-existing-image')) {
+
+                    // Mencari tombol hapus gambar yang paling dekat dengan target klik.
+                    // Ini akan bekerja meskipun yang di-klik adalah ikon di dalam tombol.
+                    const deleteButton = event.target.closest('.btn-delete-existing-image');
+
+                    // Jika yang di-klik adalah tombol hapus gambar...
+                    if (deleteButton) {
                         event.preventDefault();
-                        const button = event.target;
-                        const imageId = button.getAttribute('data-image-id');
-                        const barangId = button.getAttribute('data-barang-id');
-                        const filename = button.getAttribute('data-filename');
+
+                        // [FIX] Logika Mencegah Hapus Gambar Terakhir
+                        const container = document.getElementById('existingImagesContainer');
+                        const imageCount = container.querySelectorAll('.image-wrapper').length;
+
+                        if (imageCount <= 1) {
+                            Swal.fire('Aksi Ditolak!', 'Minimal harus ada satu gambar untuk setiap barang.',
+                                'error');
+                            return; // Hentikan fungsi di sini
+                        }
+
+                        // Jika gambar lebih dari 1, lanjutkan proses hapus...
+                        const imageId = deleteButton.getAttribute('data-image-id');
+                        const barangId = deleteButton.getAttribute('data-barang-id');
+                        const filename = deleteButton.getAttribute('data-filename');
 
                         Swal.fire({
                             title: 'Hapus Gambar Ini?',
@@ -367,7 +340,6 @@
                             cancelButtonText: 'Batal'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                // Kirim request hapus via AJAX (fetch)
                                 fetch(`/barang/gambar/${barangId}/${filename}`, {
                                         method: 'DELETE',
                                         headers: {
@@ -380,10 +352,11 @@
                                     .then(response => response.json())
                                     .then(data => {
                                         if (data.success) {
-                                            // Hapus elemen gambar dari tampilan
+                                            // Hapus elemen gambar dari tampilan secara visual
                                             document.getElementById(`image-wrapper-${imageId}`)
                                                 .remove();
-                                            // Tampilkan notifikasi toast sukses
+                                            // [PENTING] Naikkan bendera bahwa ada perubahan
+                                            imagesHaveChanged = true;
                                             Swal.fire({
                                                 toast: true,
                                                 position: 'top-end',
@@ -393,24 +366,15 @@
                                                 timer: 2000
                                             });
                                         } else {
-                                            // Tampilkan notifikasi error
                                             Swal.fire('Gagal!', data.message ||
                                                 'Gagal menghapus gambar.', 'error');
                                         }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        Swal.fire('Error!',
-                                            'Terjadi kesalahan saat menghubungi server.',
-                                            'error');
                                     });
                             }
                         });
                     }
                 });
 
-                // Pindahkan semua script lain (seperti untuk showImagesModal) ke dalam event listener ini
-                // ...
             });
         </script>
     @endpush
