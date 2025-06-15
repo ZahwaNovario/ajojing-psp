@@ -11,6 +11,7 @@ Route::middleware(['auth', 'role404:admin,pegawai'])
     ->name('dashboard');
 
 Route::middleware(['auth', 'role404:admin'])->group(function () {
-    Route::resource('barang', BarangController::class)->only(['index', 'store', 'update']);
+    Route::resource('barang', BarangController::class)
+    ->only(['index', 'store', 'update', 'destroy']);
     Route::delete('barang/gambar/{id}/{filename}', [BarangController::class, 'deleteImage'])->name('barang.image.delete');
 });

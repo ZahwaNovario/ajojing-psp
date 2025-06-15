@@ -10,6 +10,8 @@
     <meta name="keywords" content="Mantis, Bootstrap 5, Admin Template, CRM, CMS">
     <meta name="author" content="CodedThemes">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="icon" href="{{ asset('assets/images/logo-ajojing.png') }}" type="image">
 
     <!-- Google Font -->
@@ -30,6 +32,16 @@
     <!-- Plugin CSS (Page specific) -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/responsive.bootstrap5.min.css') }}">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" id="main-style-link">
+    {{-- ... --}}
+    <style>
+        .swal2-container {
+            z-index: 10000 !important;
+        }
+    </style>
 </head>
 
 <body data-pc-preset="preset-1" data-pc-direction="ltr" data-pc-theme="light">
@@ -69,6 +81,50 @@
     <script src="{{ asset('assets/js/plugins/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/responsive.bootstrap5.min.js') }}"></script>
 
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    @if (session('success'))
+        <script>
+            // Konfigurasi untuk notifikasi toast
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end', // Posisi di pojok kanan atas
+                showConfirmButton: false,
+                timer: 3000, // Durasi 3 detik
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success') }}'
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000, // Mungkin untuk error kita beri waktu lebih lama
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: 'error',
+                title: '{{ session('error') }}'
+            });
+        </script>
+    @endif
+
     <!-- Init Datatables -->
     <script>
         $('#res-config').DataTable({
@@ -94,6 +150,7 @@
         preset_change('preset-1');
         font_change('Public-Sans');
     </script>
+    @stack('scripts')
 </body>
 
 </html>

@@ -1,259 +1,417 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="container">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {{-- Card Wrapper untuk tampilan yang lebih rapi --}}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Manajemen Barang</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createBarangModal">
+                    <i class="ti ti-plus me-2"></i>Tambah Barang Baru
+                </button>
             </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if (session('success') || session('error'))
-            <script>
-                setTimeout(() => {
-                    const alert = document.querySelector('.alert');
-                    if (alert) {
-                        let bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
-                        bsAlert.close();
-                    }
-                }, 4000);
-            </script>
-        @endif
-
-
-        <h4 class="mb-3">Daftar Barang</h4>
-
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createBarangModal">
-            Tambah Barang
-        </button>
-
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Nama</th>
-                    <th>Deskripsi</th>
-                    <th>Stok</th>
-                    <th>Harga</th>
-                    <th>Gambar</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($barangs as $barang)
-                    <tr>
-                        <td>{{ $barang->nama }}</td>
-                        <td>{{ $barang->deskripsi }}</td>
-                        <td>{{ $barang->stok }}</td>
-                        <td>Rp{{ number_format($barang->harga, 0, ',', '.') }}</td>
-                        <td>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#showImagesModal{{ $barang->id }}">Lihat Gambar</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                data-bs-target="#editModal{{ $barang->id }}">Edit</button>
-                        </td>
-                    </tr>
-
-                    <!-- Show Images Modal -->
-                    <div class="modal fade" id="showImagesModal{{ $barang->id }}" tabindex="-1">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Gambar Barang: {{ $barang->nama }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-
-                                    @php
-                                        $folder = storage_path("app/public/barang/{$barang->id}");
-                                        $files = File::exists($folder) ? File::files($folder) : [];
-                                    @endphp
-
-                                    @if (count($files))
-                                        <div id="carousel-{{ $barang->id }}" class="carousel slide"
-                                            data-bs-ride="carousel">
-                                            <div class="carousel-inner">
-                                                @foreach ($files as $i => $file)
-                                                    @php $filename = $file->getFilename(); @endphp
-                                                    <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
-                                                        <img src="{{ Storage::url('barang/' . $barang->id . '/' . $filename) }}"
-                                                            class="d-block w-100 img-fluid rounded"
-                                                            style="max-height: 400px;">
-                                                        <div class="text-center mt-2">
-                                                            <form
-                                                                action="{{ route('barang.image.delete', [$barang->id, $filename]) }}"
-                                                                method="POST">
-                                                                @csrf @method('DELETE')
-                                                                <button class="btn btn-sm btn-danger">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            <button class="carousel-control-prev" type="button"
-                                                data-bs-target="#carousel-{{ $barang->id }}" data-bs-slide="prev">
-                                                <span class="carousel-control-prev-icon"></span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button"
-                                                data-bs-target="#carousel-{{ $barang->id }}" data-bs-slide="next">
-                                                <span class="carousel-control-next-icon"></span>
-                                            </button>
-                                        </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Gambar</th>
+                            <th>Nama</th>
+                            <th>Stok</th>
+                            <th>Harga</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($barangs as $barang)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    {{-- Menampilkan thumbnail dari relasi 'images' --}}
+                                    @if ($barang->images->isNotEmpty())
+                                        <img src="{{ Storage::url($barang->images->where('is_utama', true)->first()->path ?? $barang->images->first()->path) }}"
+                                            alt="{{ $barang->nama }}" width="120" class="img-thumbnail">
                                     @else
-                                        <p class="text-muted">Belum ada gambar.</p>
+                                        {{-- Placeholder jika tidak ada gambar --}}
+                                        <img src="https://via.placeholder.com/150" alt="No Image" width="60"
+                                            class="img-thumbnail">
                                     @endif
+                                </td>
+                                <td>
+                                    <strong>{{ $barang->nama }}</strong>
+                                    {{-- Menampilkan deskripsi singkat --}}
+                                    <p class="text-muted small mb-0">{{ Str::limit($barang->deskripsi, 50) }}</p>
+                                </td>
+                                <td>{{ $barang->stok }}</td>
+                                <td>Rp{{ number_format($barang->harga, 0, ',', '.') }}</td>
+                                <td class="text-center">
+                                    {{-- Tombol Aksi dengan Ikon dari tema Anda --}}
+                                    <button class="btn btn-sm btn-info" title="Lihat Gambar" data-bs-toggle="modal"
+                                        data-bs-target="#showImagesModal" data-nama-barang="{{ $barang->nama }}"
+                                        data-images="{{ json_encode($barang->images->pluck('path')->map(fn($path) => Storage::url($path))) }}">
+                                        <i class="ti ti-photo"></i>
+                                    </button>
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                    <button class="btn btn-sm btn-warning" title="Edit Barang" data-bs-toggle="modal"
+                                        data-bs-target="#editBarangModal" {{-- Kita kirim data barang LENGKAP DENGAN GAMBARNYA --}}
+                                        data-barang="{{ json_encode($barang->load('images')) }}"
+                                        data-action="{{ route('barang.update', $barang->id) }}">
+                                        <i class="ti ti-pencil"></i>
+                                    </button>
 
-                    <!-- Create Barang Modal -->
-                    <div class="modal fade" id="createBarangModal" tabindex="-1">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <form action="{{ route('barang.store') }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Tambah Barang</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label>Nama</label>
-                                            <input type="text" name="nama" class="form-control" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Deskripsi</label>
-                                            <textarea name="deskripsi" class="form-control" required></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Stok</label>
-                                            <input type="number" name="stok" class="form-control" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Harga</label>
-                                            <input type="number" name="harga" class="form-control" required>
-                                        </div>
-                                        <div id="gambarInputsCreate">
-                                            <div class="input-group mb-2">
-                                                <input type="file" name="gambar[]" class="form-control" accept="image/*">
-                                                <button type="button" class="btn btn-outline-danger"
-                                                    onclick="removeInput(this, 'gambarInputsCreate')">✖</button>
-                                            </div>
-                                        </div>
-                                        <button type="button" class="btn btn-sm btn-secondary"
-                                            onclick="addInputWithRemove('gambarInputsCreate')">+ Tambah Gambar</button>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn btn-primary">Simpan</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Edit Barang Modal -->
-                    <div class="modal fade" id="editModal{{ $barang->id }}" tabindex="-1">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <form action="{{ route('barang.update', $barang->id) }}" method="POST"
-                                    enctype="multipart/form-data">
-                                    @csrf @method('PUT')
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Edit Barang</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label>Nama</label>
-                                            <input type="text" name="nama" value="{{ $barang->nama }}"
-                                                class="form-control" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Deskripsi</label>
-                                            <textarea name="deskripsi" class="form-control" required>{{ $barang->deskripsi }}</textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Stok</label>
-                                            <input type="number" name="stok" value="{{ $barang->stok }}"
-                                                class="form-control" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Harga</label>
-                                            <input type="number" name="harga" value="{{ $barang->harga }}"
-                                                class="form-control" required>
-                                        </div>
-                                        <div id="gambarInputsEdit{{ $barang->id }}">
-                                            <div class="input-group mb-2">
-                                                <input type="file" name="gambar[]" class="form-control"
-                                                    accept="image/*">
-                                                <button type="button" class="btn btn-outline-danger"
-                                                    onclick="removeInput(this, 'gambarInputsEdit{{ $barang->id }}')">✖</button>
-                                            </div>
-                                        </div>
-                                        <button type="button" class="btn btn-sm btn-secondary"
-                                            onclick="addInputWithRemove('gambarInputsEdit{{ $barang->id }}')">+ Tambah
-                                            Gambar</button>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn btn-primary">Update</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </tbody>
-        </table>
+                                    <form action="{{ route('barang.destroy', $barang->id) }}" method="POST"
+                                        class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger btn-delete"
+                                            title="Hapus Barang">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Belum ada data barang. Silakan
+                                    tambahkan barang baru.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <script>
-        function addInputWithRemove(containerId) {
-            const container = document.getElementById(containerId);
+    {{-- ========================================================================= --}}
+    {{-- MODALS (Hanya ada SATU untuk setiap jenis, di luar loop) --}}
+    {{-- ========================================================================= --}}
 
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('input-group', 'mb-2');
+    <div class="modal fade" id="showImagesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showImagesModalTitle">Gambar Barang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="showImagesModalBody">
+                    {{-- Carousel akan dibuat oleh JavaScript di sini --}}
+                </div>
+            </div>
+        </div>
+    </div>
 
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.name = 'gambar[]';
-            input.accept = 'image/*';
-            input.classList.add('form-control');
+    <div class="modal fade" id="editBarangModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editBarangForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Barang</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{-- Input-input lama (nama, deskripsi, stok, harga) biarkan seperti semula --}}
+                        <input type="hidden" name="id" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="text" name="nama" id="editNama" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deskripsi</label>
+                            <textarea name="deskripsi" id="editDeskripsi" class="form-control" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stok</label>
+                                <input type="number" name="stok" id="editStok" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Harga</label>
+                                <input type="number" name="harga" id="editHarga" class="form-control" required>
+                            </div>
+                        </div>
 
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.classList.add('btn', 'btn-outline-danger');
-            btn.innerText = '✖';
-            btn.onclick = () => {
-                if (container.childElementCount > 1) {
-                    wrapper.remove();
-                } else {
-                    alert('Minimal satu input harus ada.');
+                        <hr>
+
+                        {{-- BAGIAN BARU UNTUK MENAMPILKAN GAMBAR LAMA --}}
+                        <div class="mb-3">
+                            <label class="form-label">Gambar yang Sudah Ada</label>
+                            <div id="existingImagesContainer" class="row g-2">
+                                {{-- Gambar lama akan dimuat oleh JavaScript di sini --}}
+                                {{-- Contoh satu item: --}}
+                                {{-- <div class="col-auto">
+                <div class="position-relative">
+                    <img src="..." class="img-thumbnail" width="100">
+                    <button class="btn btn-sm btn-danger position-absolute top-0 end-0">&times;</button>
+                </div>
+            </div> --}}
+                            </div>
+                        </div>
+
+                        {{-- BAGIAN BARU UNTUK MENAMBAH GAMBAR BARU --}}
+                        <div class="mb-3">
+                            <label class="form-label">Tambah Gambar Baru</label>
+                            <div id="newImageInputsContainer">
+                                {{-- Input untuk gambar baru akan ditambah oleh JavaScript di sini --}}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                                onclick="addNewImageInput('newImageInputsContainer')">
+                                <i class="ti ti-plus"></i> Tambah Input
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    {{-- Modal Tambah Barang (Bisa Anda include dari file lain agar lebih rapi) --}}
+    @include('admin.barang.create_barang')
+
+
+    @push('scripts')
+        {{-- ========================================================================= --}}
+        {{-- JAVASCRIPT untuk Modal Dinamis --}}
+        {{-- ========================================================================= --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                // --- Script untuk Modal Edit Dinamis ---
+                const editModalEl = document.getElementById('editBarangModal');
+                if (editModalEl) {
+                    editModalEl.addEventListener('show.bs.modal', function(event) {
+                        const button = event.relatedTarget;
+                        const barang = JSON.parse(button.getAttribute('data-barang'));
+                        const action = button.getAttribute('data-action');
+
+                        const form = editModalEl.querySelector('#editBarangForm');
+                        form.action = action;
+                        form.querySelector('#editId').value = barang.id;
+                        form.querySelector('#editNama').value = barang.nama;
+                        form.querySelector('#editDeskripsi').value = barang.deskripsi;
+                        form.querySelector('#editStok').value = barang.stok;
+                        form.querySelector('#editHarga').value = barang.harga;
+                    });
                 }
-            };
 
-            wrapper.appendChild(input);
-            wrapper.appendChild(btn);
-            container.appendChild(wrapper);
-        }
+                // --- Script untuk Modal Lihat Gambar Dinamis ---
+                const imagesModalEl = document.getElementById('showImagesModal');
+                if (imagesModalEl) {
+                    imagesModalEl.addEventListener('show.bs.modal', function(event) {
+                        const button = event.relatedTarget;
+                        const namaBarang = button.getAttribute('data-nama-barang');
+                        const images = JSON.parse(button.getAttribute('data-images'));
+                        const modalTitle = imagesModalEl.querySelector('#showImagesModalTitle');
+                        const modalBody = imagesModalEl.querySelector('#showImagesModalBody');
 
-        function removeInput(button, containerId) {
-            const container = document.getElementById(containerId);
-            if (container.childElementCount > 1) {
-                button.parentElement.remove();
-            } else {
-                alert('Minimal satu input harus ada.');
+                        modalTitle.textContent = 'Gambar Barang: ' + namaBarang;
+                        modalBody.innerHTML = ''; // Kosongkan isi modal sebelum diisi ulang
+
+                        if (images && images.length > 0) {
+                            let carouselItemsHTML = images.map((url, index) => `
+                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                <img src="${url}" class="d-block w-100 img-fluid rounded" style="max-height: 450px; object-fit: contain;" alt="${namaBarang} - Gambar ${index + 1}">
+                            </div>
+                        `).join('');
+
+                            const carouselHTML = `
+                            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">${carouselItemsHTML}</div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        `;
+                            modalBody.innerHTML = carouselHTML;
+                        } else {
+                            modalBody.innerHTML =
+                                '<p class="text-muted text-center py-5">Tidak ada gambar untuk barang ini.</p>';
+                        }
+                    });
+                }
+            });
+        </script>
+        <script>
+            // Script untuk konfirmasi hapus dengan SweetAlert2
+            document.addEventListener('DOMContentLoaded', function() {
+                // 1. Dapatkan semua tombol dengan kelas .btn-delete
+                const deleteButtons = document.querySelectorAll('.btn-delete');
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        const form = this.closest('form');
+
+                        const swalWithBootstrapButtons = Swal.mixin({
+                            customClass: {
+                                confirmButton: "btn btn-danger mx-2", // Saya ubah jadi merah untuk tombol hapus
+                                cancelButton: "btn btn-secondary mx-2"
+                            },
+                            buttonsStyling: false
+                        });
+
+                        swalWithBootstrapButtons.fire({
+                            title: 'Apakah Anda yakin?',
+                            text: "Data yang dihapus tidak dapat dikembalikan!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, hapus!',
+                            cancelButtonText: 'Batal',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+
+            });
+        </script>
+
+        <script>
+            // Fungsi untuk menambah input file baru (bisa dipakai di modal create & edit)
+            function addNewImageInput(containerId) {
+                const container = document.getElementById(containerId);
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('input-group', 'mb-2');
+                wrapper.innerHTML = `
+        <input type="file" name="gambar[]" class="form-control" accept="image/*">
+        <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">
+            <i class="ti ti-trash"></i>
+        </button>
+    `;
+                container.appendChild(wrapper);
             }
-        }
-    </script>
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const editModalEl = document.getElementById('editBarangModal');
+                if (editModalEl) {
+                    editModalEl.addEventListener('show.bs.modal', function(event) {
+                        const button = event.relatedTarget;
+                        const barang = JSON.parse(button.getAttribute('data-barang'));
+                        const action = button.getAttribute('data-action');
+
+                        const form = editModalEl.querySelector('#editBarangForm');
+                        const existingImagesContainer = editModalEl.querySelector('#existingImagesContainer');
+                        const newImageInputsContainer = editModalEl.querySelector('#newImageInputsContainer');
+
+                        // Isi form dengan data barang
+                        form.action = action;
+                        form.querySelector('#editId').value = barang.id;
+                        form.querySelector('#editNama').value = barang.nama;
+                        form.querySelector('#editDeskripsi').value = barang.deskripsi;
+                        form.querySelector('#editStok').value = barang.stok;
+                        form.querySelector('#editHarga').value = barang.harga;
+
+                        // Kosongkan kontainer gambar sebelum diisi ulang
+                        existingImagesContainer.innerHTML = '';
+                        newImageInputsContainer.innerHTML = '';
+
+                        // Tampilkan gambar yang sudah ada
+                        if (barang.images && barang.images.length > 0) {
+                            barang.images.forEach(image => {
+                                const filename = image.path.split('/').pop();
+
+                                const imgWrapper = document.createElement('div');
+                                imgWrapper.classList.add('col-auto');
+                                imgWrapper.setAttribute('id', `image-wrapper-${image.id}`);
+                                imgWrapper.innerHTML = `
+                        <div class="position-relative">
+                <img src="/storage/${image.path}" class="img-thumbnail" width="100" height="100" style="object-fit: cover;">
+                <button type="button"
+                        class="btn btn-sm btn-danger rounded-circle position-absolute top-0 end-0 mt-n1 me-n1 btn-delete-existing-image"
+                        data-image-id="${image.id}"
+                        data-barang-id="${barang.id}"
+                        data-filename="${filename}"
+                        title="Hapus Gambar Ini">
+                    &times;
+                </button>
+            </div>
+                    `;
+                                existingImagesContainer.appendChild(imgWrapper);
+                            });
+                        } else {
+                            existingImagesContainer.innerHTML =
+                                '<p class="col text-muted small">Belum ada gambar.</p>';
+                        }
+                    });
+                }
+
+                // Event listener untuk menghapus gambar dengan AJAX
+                document.addEventListener('click', function(event) {
+                    if (event.target.matches('.btn-delete-existing-image')) {
+                        event.preventDefault();
+                        const button = event.target;
+                        const imageId = button.getAttribute('data-image-id');
+                        const barangId = button.getAttribute('data-barang-id');
+                        const filename = button.getAttribute('data-filename');
+
+                        Swal.fire({
+                            title: 'Hapus Gambar Ini?',
+                            text: "Aksi ini tidak dapat dibatalkan!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Ya, hapus!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Kirim request hapus via AJAX (fetch)
+                                fetch(`/barang/gambar/${barangId}/${filename}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]').getAttribute(
+                                                'content'),
+                                            'Accept': 'application/json'
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Hapus elemen gambar dari tampilan
+                                            document.getElementById(`image-wrapper-${imageId}`)
+                                                .remove();
+                                            // Tampilkan notifikasi toast sukses
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'top-end',
+                                                icon: 'success',
+                                                title: data.message,
+                                                showConfirmButton: false,
+                                                timer: 2000
+                                            });
+                                        } else {
+                                            // Tampilkan notifikasi error
+                                            Swal.fire('Gagal!', data.message ||
+                                                'Gagal menghapus gambar.', 'error');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        Swal.fire('Error!',
+                                            'Terjadi kesalahan saat menghubungi server.',
+                                            'error');
+                                    });
+                            }
+                        });
+                    }
+                });
+
+                // Pindahkan semua script lain (seperti untuk showImagesModal) ke dalam event listener ini
+                // ...
+            });
+        </script>
+    @endpush
 @endsection
