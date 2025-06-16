@@ -31,5 +31,7 @@ class AppServiceProvider extends ServiceProvider
             // Kuncinya berdasarkan email yang diinput DAN alamat IP pengguna
             return Limit::perMinute(5)->by($request->input('email') . $request->ip());
         });
+
+        config(['cart.tax' => 0]);
     }
 }

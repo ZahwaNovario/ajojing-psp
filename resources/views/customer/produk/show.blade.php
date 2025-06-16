@@ -18,9 +18,10 @@
                         <div class="d-flex flex-wrap">
                             @foreach ($barang->images as $image)
                                 <div class="p-1">
-                                    <img src="{{ $image->url }}" alt="Thumbnail {{ $loop->iteration }}"
+                                    <img src="{{ Storage::url($image->path) }}" alt="Thumbnail {{ $loop->iteration }}"
                                         class="img-thumbnail cursor-pointer thumbnail-image" width="80"
-                                        style="height: 80px; object-fit: cover;" data-large-src="{{ $image->url }}">
+                                        style="height: 80px; object-fit: cover;"
+                                        data-large-src="{{ Storage::url($image->path) }}">
                                 </div>
                             @endforeach
                         </div>

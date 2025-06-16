@@ -2,15 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
+
+    /**
+     * [BARU] Beritahu Eloquent bahwa 'id' tetap auto-increment.
+     * @var bool
+     */
+    public $incrementing = true;
+
+    /**
+     * [BARU] Beritahu Eloquent bahwa tipe data primary key adalah integer.
+     * @var string
+     */
+    protected $keyType = 'int';
 
     /**
      * Kolom yang boleh diisi secara massal (mass assignable).
+     * Pastikan 'uuid' tidak ada di sini karena akan diisi otomatis.
      * @var array
      */
     protected $fillable = [
@@ -22,7 +36,15 @@ class Order extends Model
         'nomor_resi',
         'catatan_pembeli',
     ];
-
+    /**
+     * [PENTING] Beritahu trait HasUuids kolom mana saja yang harus diisi UUID.
+     *
+     * @return array
+     */
+    public function uniqueIds()
+    {
+        return ['uuid']; // <-- Bukan 'id', tapi 'uuid'
+    }
     /**
      * Relasi ke User (customer yang memesan).
      * Nama method 'user' berarti kita bisa panggil $order->user
@@ -48,5 +70,13 @@ class Order extends Model
     public function details()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+
+    /**
+     * Beritahu Laravel untuk menggunakan 'uuid' saat mencari di route.
+     */
+    public function getRouteKeyName()
+    {
+        return 'uuid';
     }
 }

@@ -84,7 +84,8 @@
                                     <span>Rp {{ Cart::total(0, ',', '.') }}</span>
                                 </li>
                             </ul>
-                            <a href="#" class="btn btn-primary w-100 mt-3">Lanjut ke Checkout</a>
+                            <a href="{{ route('checkout.index') }}" class="btn btn-primary w-100 mt-3">Lanjut ke
+                                Checkout</a>
                         </div>
                     </div>
                 </div>

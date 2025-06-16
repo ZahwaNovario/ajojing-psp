@@ -48,6 +48,8 @@
                                 </li>
                             @endhasrole
                             <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profil Saya</a></li>
+                            <li><a class="dropdown-item" href="{{ route('account.orders.index') }}">Riwayat Pesanan</a>
+                            </li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
