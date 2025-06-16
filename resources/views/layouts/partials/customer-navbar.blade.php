@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">
-            <img src="{{ asset('assets/images/logo-ajojing.png') }}" alt="Ajojing Logo" style="height: 40px;">
+            <img src="{{ asset('assets/images/logo-ajojing.png') }}" alt="Ajojing Logo" style="height: 100px;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
@@ -28,9 +28,11 @@
                 @endguest
                 @auth
                     <li class="nav-item">
-                        <a class="nav-link position-relative" href="#">
+                        <a class="nav-link position-relative" href="{{ route('cart.index') }}">
                             <i class="ti ti-shopping-cart"></i>
-                            <span class="badge bg-danger rounded-pill">{{ Cart::count() }}</span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ Cart::count() }}
+                            </span>
                         </a>
                     </li>
                     <li class="nav-item dropdown">

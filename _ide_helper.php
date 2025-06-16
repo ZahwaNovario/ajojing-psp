@@ -22733,6 +22733,258 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace Gloudemans\Shoppingcart\Facades {
+    /**
+     * 
+     *
+     */
+    class Cart {
+        /**
+         * Set the current cart instance.
+         *
+         * @param string|null $instance
+         * @return \Gloudemans\Shoppingcart\Cart 
+         * @static 
+         */
+        public static function instance($instance = null)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->instance($instance);
+        }
+
+        /**
+         * Get the current cart instance.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function currentInstance()
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->currentInstance();
+        }
+
+        /**
+         * Add an item to the cart.
+         *
+         * @param mixed $id
+         * @param mixed $name
+         * @param int|float $qty
+         * @param float $price
+         * @param array $options
+         * @param float $taxrate
+         * @return \Gloudemans\Shoppingcart\CartItem 
+         * @static 
+         */
+        public static function add($id, $name = null, $qty = null, $price = null, $options = [], $taxrate = null)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->add($id, $name, $qty, $price, $options, $taxrate);
+        }
+
+        /**
+         * Update the cart item with the given rowId.
+         *
+         * @param string $rowId
+         * @param mixed $qty
+         * @return \Gloudemans\Shoppingcart\CartItem 
+         * @static 
+         */
+        public static function update($rowId, $qty)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->update($rowId, $qty);
+        }
+
+        /**
+         * Remove the cart item with the given rowId from the cart.
+         *
+         * @param string $rowId
+         * @return void 
+         * @static 
+         */
+        public static function remove($rowId)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            $instance->remove($rowId);
+        }
+
+        /**
+         * Get a cart item from the cart by its rowId.
+         *
+         * @param string $rowId
+         * @return \Gloudemans\Shoppingcart\CartItem 
+         * @static 
+         */
+        public static function get($rowId)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->get($rowId);
+        }
+
+        /**
+         * Destroy the current cart instance.
+         *
+         * @return void 
+         * @static 
+         */
+        public static function destroy()
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            $instance->destroy();
+        }
+
+        /**
+         * Get the content of the cart.
+         *
+         * @return \Illuminate\Support\Collection 
+         * @static 
+         */
+        public static function content()
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->content();
+        }
+
+        /**
+         * Get the number of items in the cart.
+         *
+         * @return int|float 
+         * @static 
+         */
+        public static function count()
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->count();
+        }
+
+        /**
+         * Get the total price of the items in the cart.
+         *
+         * @param int $decimals
+         * @param string $decimalPoint
+         * @param string $thousandSeperator
+         * @return string 
+         * @static 
+         */
+        public static function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->total($decimals, $decimalPoint, $thousandSeperator);
+        }
+
+        /**
+         * Get the total tax of the items in the cart.
+         *
+         * @param int $decimals
+         * @param string $decimalPoint
+         * @param string $thousandSeperator
+         * @return float 
+         * @static 
+         */
+        public static function tax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->tax($decimals, $decimalPoint, $thousandSeperator);
+        }
+
+        /**
+         * Get the subtotal (total - tax) of the items in the cart.
+         *
+         * @param int $decimals
+         * @param string $decimalPoint
+         * @param string $thousandSeperator
+         * @return float 
+         * @static 
+         */
+        public static function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->subtotal($decimals, $decimalPoint, $thousandSeperator);
+        }
+
+        /**
+         * Search the cart content for a cart item matching the given search closure.
+         *
+         * @param \Closure $search
+         * @return \Illuminate\Support\Collection 
+         * @static 
+         */
+        public static function search($search)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->search($search);
+        }
+
+        /**
+         * Associate the cart item with the given rowId with the given model.
+         *
+         * @param string $rowId
+         * @param mixed $model
+         * @return void 
+         * @static 
+         */
+        public static function associate($rowId, $model)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            $instance->associate($rowId, $model);
+        }
+
+        /**
+         * Set the tax rate for the cart item with the given rowId.
+         *
+         * @param string $rowId
+         * @param int|float $taxRate
+         * @return void 
+         * @static 
+         */
+        public static function setTax($rowId, $taxRate)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            $instance->setTax($rowId, $taxRate);
+        }
+
+        /**
+         * Store an the current instance of the cart.
+         *
+         * @param mixed $identifier
+         * @return void 
+         * @static 
+         */
+        public static function store($identifier)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            $instance->store($identifier);
+        }
+
+        /**
+         * Restore the cart with the given identifier.
+         *
+         * @param mixed $identifier
+         * @return void 
+         * @static 
+         */
+        public static function restore($identifier)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            $instance->restore($identifier);
+        }
+
+        /**
+         * Deletes the stored cart with given identifier
+         *
+         * @param mixed $identifier
+         * @static 
+         */
+        public static function deleteStoredCart($identifier)
+        {
+            /** @var \Gloudemans\Shoppingcart\Cart $instance */
+            return $instance->deleteStoredCart($identifier);
+        }
+
+            }
+    }
+
 namespace Illuminate\Http {
     /**
      * 
@@ -27653,6 +27905,7 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
+    class Cart extends \Gloudemans\Shoppingcart\Facades\Cart {}
 }
 
 
