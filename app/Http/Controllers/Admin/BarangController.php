@@ -67,7 +67,7 @@ class BarangController extends Controller
             }
         }
 
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan.');
+        return redirect()->route('admin.barang.index')->with('success', 'Barang berhasil ditambahkan.');
     }
 
     /**
@@ -126,7 +126,7 @@ class BarangController extends Controller
             }
         }
 
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil diupdate.');
+        return redirect()->route('admin.barang.index')->with('success', 'Barang berhasil diupdate.');
     }
 
     /**
@@ -149,7 +149,7 @@ class BarangController extends Controller
         $barang->delete();
 
         // Redirect kembali dengan pesan sukses.
-        return redirect()->route('barang.index')
+        return redirect()->route('admin.barang.index')
             ->with('success', 'Barang berhasil dihapus.');
     }
 
@@ -193,6 +193,4 @@ class BarangController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-
-
 }

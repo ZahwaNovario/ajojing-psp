@@ -35,6 +35,7 @@ class Order extends Model
         'alamat_pengiriman',
         'nomor_resi',
         'catatan_pembeli',
+        'bukti_pembayaran',
     ];
     /**
      * [PENTING] Beritahu trait HasUuids kolom mana saja yang harus diisi UUID.

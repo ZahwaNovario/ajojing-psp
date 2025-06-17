@@ -49,7 +49,18 @@
 @if (session('success'))
     <script>
         // Cek apakah ada sinyal dari controller untuk menampilkan tombol keranjang
-        @if (session('showCartButton'))
+        @if (session('notifPembayaran'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Upload Berhasil!',
+                // Gunakan 'html' untuk teks yang lebih panjang atau dengan format
+                html: '{{ session('success') }}<br><br>Status pesanan Anda kini telah diperbarui.',
+                confirmButtonText: 'OK, Mengerti',
+                confirmButtonColor: '#0d6efd'
+            });
+
+            // Cek sinyal untuk notifikasi tambah ke keranjang (yang sudah ada sebelumnya)
+        @elseif (session('showCartButton'))
 
             // Jika YA, tampilkan notifikasi dengan tombol
             Swal.fire({

@@ -29,7 +29,6 @@ class AccountController extends Controller
 
         return view('customer.account.order-show', compact('order'));
     }
-
     public function confirmPayment(Request $request, Order $order)
     {
         // Otorisasi: Pastikan user hanya bisa konfirmasi order miliknya
@@ -42,15 +41,29 @@ class AccountController extends Controller
             'bukti_pembayaran' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Simpan file bukti pembayaran
-        $path = $request->file('bukti_pembayaran')->store('public/bukti-pembayaran');
+        // Siapkan variabel path di luar blok if
+        $path = null;
 
-        // Update record order di database
+        if ($request->hasFile('bukti_pembayaran')) {
+            $file = $request->file('bukti_pembayaran');
+
+            // 1. Membuat nama file yang unik
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // 2. [FIX] Simpan file DAN tangkap path yang dikembalikan oleh storeAs
+            // Saya sarankan tetap memakai subfolder per order agar rapi
+            $path = $file->storeAs("bukti-pembayaran/{$order->id}", $filename, 'public');
+        }
+
+        // 3. [FIX] Update record order di database menggunakan variabel $path
+        // Variabel $path berisi path yang sudah pasti benar dari hasil penyimpanan
         $order->update([
-            'bukti_pembayaran' => str_replace('public/', '', $path),
+            'bukti_pembayaran' => $path,
             'status' => 'menunggu_verifikasi' // Status berubah, menunggu admin mengecek
         ]);
 
-        return redirect()->route('account.orders.index')->with('success', 'Terima kasih! Bukti pembayaran Anda telah diupload dan akan segera kami verifikasi.');
+        return redirect()->route('account.orders.index')
+            ->with('success', 'Terima kasih! Bukti pembayaran Anda telah diupload dan akan segera kami verifikasi.')
+            ->with('notifPembayaran', true);
     }
 }

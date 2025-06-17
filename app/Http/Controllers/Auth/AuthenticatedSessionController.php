@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
         $url = '';
         if ($user->hasRole('admin')) {
             // Jika admin, tujuan utamanya adalah dashboard admin (misal: halaman manajemen barang)
-            $url = route('barang.index');
+            $url = route('dashboard');
         } elseif ($user->hasRole('pegawai')) {
             // Jika pegawai, tujuannya adalah halaman manajemen pesanan
             // Sesuai permintaan Anda, ini kita siapkan untuk nanti.

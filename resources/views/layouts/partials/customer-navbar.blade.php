@@ -41,12 +41,18 @@
                             {{ Auth::user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            @hasrole('admin')
-                                <li><a class="dropdown-item" href="{{ route('barang.index') }}">Dashboard Admin</a></li>
+                            @role('admin')
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard Admin</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                            @endhasrole
+                            @endrole
+                            @role('pegawai')
+                                <li><a class="dropdown-item" href="{{ route('pegawai.barang.index') }}">Manajemen</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                            @endrole
                             <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profil Saya</a></li>
                             <li><a class="dropdown-item" href="{{ route('account.orders.index') }}">Riwayat Pesanan</a>
                             </li>

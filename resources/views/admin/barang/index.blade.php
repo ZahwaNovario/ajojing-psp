@@ -15,7 +15,8 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="res-config" class="display table table-striped table-hover dt-responsive nowrap" style="width: 100%">
+                <table id="res-config" class="display table table-striped table-hover dt-responsive nowrap"
+                    style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -343,7 +344,7 @@
                             cancelButtonText: 'Batal'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                fetch(`/barang/gambar/${barangId}/${filename}`, {
+                                fetch(`/admin/barang/gambar/${barangId}/${filename}`, {
                                         method: 'DELETE',
                                         headers: {
                                             'X-CSRF-TOKEN': document.querySelector(
@@ -369,7 +370,7 @@
                                                 timer: 2000
                                             });
                                         } else {
-                                            Swal.fire('Gagal!', data.message ||
+                                            Swal.fire('Gagal!', "Internal Server Error" ||
                                                 'Gagal menghapus gambar.', 'error');
                                         }
                                     });
