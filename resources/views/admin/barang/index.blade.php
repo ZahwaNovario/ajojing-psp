@@ -6,9 +6,11 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Manajemen Barang</h5>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createBarangModal">
-                    <i class="ti ti-plus me-2"></i>Tambah Barang Baru
-                </button>
+                @role('admin')
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createBarangModal">
+                        <i class="ti ti-plus me-2"></i>Tambah Barang Baru
+                    </button>
+                @endrole
             </div>
         </div>
         <div class="card-body">
@@ -53,23 +55,24 @@
                                         data-images="{{ json_encode($barang->images->pluck('path')->map(fn($path) => Storage::url($path))) }}">
                                         <i class="ti ti-photo"></i>
                                     </button>
-
-                                    <button class="btn btn-sm btn-warning" title="Edit Barang" data-bs-toggle="modal"
-                                        data-bs-target="#editBarangModal" {{-- Kita kirim data barang LENGKAP DENGAN GAMBARNYA --}}
-                                        data-barang="{{ json_encode($barang->load('images')) }}"
-                                        data-action="{{ route('barang.update', $barang->id) }}">
-                                        <i class="ti ti-pencil"></i>
-                                    </button>
-
-                                    <form action="{{ route('barang.destroy', $barang->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger btn-delete"
-                                            title="Hapus Barang">
-                                            <i class="ti ti-trash"></i>
+                                    @role('admin')
+                                        <button class="btn btn-sm btn-warning" title="Edit Barang" data-bs-toggle="modal"
+                                            data-bs-target="#editBarangModal" {{-- Kita kirim data barang LENGKAP DENGAN GAMBARNYA --}}
+                                            data-barang="{{ json_encode($barang->load('images')) }}"
+                                            data-action="{{ route('barang.update', $barang->id) }}">
+                                            <i class="ti ti-pencil"></i>
                                         </button>
-                                    </form>
+
+                                        <form action="{{ route('barang.destroy', $barang->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger btn-delete"
+                                                title="Hapus Barang">
+                                                <i class="ti ti-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endrole
                                 </td>
                             </tr>
                         @empty
