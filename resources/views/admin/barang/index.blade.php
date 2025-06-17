@@ -15,7 +15,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table id="res-config" class="display table table-striped table-hover dt-responsive nowrap" style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -59,11 +59,11 @@
                                         <button class="btn btn-sm btn-warning" title="Edit Barang" data-bs-toggle="modal"
                                             data-bs-target="#editBarangModal" {{-- Kita kirim data barang LENGKAP DENGAN GAMBARNYA --}}
                                             data-barang="{{ json_encode($barang->load('images')) }}"
-                                            data-action="{{ route('barang.update', $barang->id) }}">
+                                            data-action="{{ route('admin.barang.update', $barang->id) }}">
                                             <i class="ti ti-pencil"></i>
                                         </button>
 
-                                        <form action="{{ route('barang.destroy', $barang->id) }}" method="POST"
+                                        <form action="{{ route('admin.barang.destroy', $barang->id) }}" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')

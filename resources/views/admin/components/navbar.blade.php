@@ -15,12 +15,26 @@
                             <span class="pc-mtext">Dashboard</span>
                         </a>
                     </li>
+                    <li class="pc-item">
+                        <a href="{{ route('admin.users.index') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-users"></i></span>
+                            <span class="pc-mtext">Manajemen User</span>
+                        </a>
+                    </li>
                 @endrole
+
                 <li class="pc-item">
-                    <a href="{{ route('barang.index') }}" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-clipboard-list"></i></span>
-                        <span class="pc-mtext">Barang</span>
-                    </a>
+                    @role('admin')
+                        <a href="{{ route('admin.barang.index') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-package"></i></span>
+                            <span class="pc-mtext">Barang</span>
+                        </a>
+                        @elserole('pegawai')
+                        <a href="{{ route('pegawai.barang.index') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-package"></i></span>
+                            <span class="pc-mtext">Barang</span>
+                        </a>
+                    @endrole
                 </li>
 
                 <li class="pc-item">
@@ -37,11 +51,11 @@
                     @endrole
                 </li>
 
-
                 <li class="pc-item pc-caption">
                     <label>UI Components</label>
                     <i class="ti ti-dashboard"></i>
                 </li>
+
                 <li class="pc-item">
                     <a href="../elements/bc_typography.html" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-typography"></i></span>

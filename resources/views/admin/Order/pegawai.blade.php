@@ -9,12 +9,22 @@
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h5>Kode: {{ $order->kode }}</h5>
+                            <h5>Kode: {{ $order->kode ?? '-' }}</h5>
                             <p><strong>Customer:</strong> {{ $order->user->name ?? '-' }}</p>
-                            <p><strong>Total:</strong> Rp{{ number_format($order->total, 0, ',', '.') }}</p>
+                            <p><strong>Total:</strong> Rp{{ number_format($order->total_harga ?? 0, 0, ',', '.') }}</p>
                             <p><strong>Waktu:</strong> {{ $order->created_at->format('d M Y H:i') }}</p>
 
-                            <form action="{{ route('pegawai.orders.konfirmasi', $order) }}" method="POST" class="d-inline">
+                            @if ($order->bukti_pembayaran)
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong>Bukti Pembayaran:</strong></p>
+                                    <img src="{{ asset('storage/' . $order->bukti_pembayaran) }}" class="img-fluid rounded"
+                                        style="max-height: 250px;">
+                                </div>
+                            @else
+                                <p class="text-danger">❌ Bukti pembayaran belum tersedia.</p>
+                            @endif
+
+                            <form action="{{ route('pegawai.order.konfirmasi', $order) }}" method="POST" class="d-inline">
                                 @csrf
                                 <button class="btn btn-success btn-sm">Konfirmasi</button>
                             </form>
@@ -25,7 +35,7 @@
                             <!-- Modal Tolak -->
                             <div class="modal fade" id="tolakModal{{ $order->id }}" tabindex="-1">
                                 <div class="modal-dialog">
-                                    <form action="{{ route('pegawai.orders.tolak', $order) }}" method="POST"
+                                    <form action="{{ route('pegawai.order.tolak', $order) }}" method="POST"
                                         class="modal-content">
                                         @csrf
                                         <div class="modal-header">

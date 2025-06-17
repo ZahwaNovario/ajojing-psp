@@ -1,7 +1,7 @@
 <div class="modal fade" id="createBarangModal" tabindex="-1" aria-labelledby="createBarangModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('barang.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.barang.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="createBarangModalLabel">Tambah Barang Baru</h5>
