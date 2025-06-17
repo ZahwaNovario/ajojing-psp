@@ -14,7 +14,14 @@
                             <h5 class="card-title mb-3">Alamat Pengiriman</h5>
                             <div class="mb-3">
                                 <label for="alamat_pengiriman" class="form-label">Alamat Lengkap</label>
-                                <textarea name="alamat_pengiriman" id="alamat_pengiriman" rows="4" class="form-control" required>{{-- Bisa diisi dengan alamat default user jika ada: Auth::user()->alamat --}}</textarea>
+                                <textarea name="alamat_pengiriman" id="alamat_pengiriman" rows="4"
+                                    class="form-control @error('alamat_pengiriman') is-invalid @enderror" required>{{-- Bisa diisi dengan alamat default user jika ada: Auth::user()->alamat --}}</textarea>
+                                {{-- BLOK INI AKAN MENAMPILKAN ERROR JIKA ADA --}}
+                                @error('alamat_pengiriman')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="catatan_pembeli" class="form-label">Catatan untuk Penjual (Opsional)</label>

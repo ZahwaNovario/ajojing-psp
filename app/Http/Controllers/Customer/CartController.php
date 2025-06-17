@@ -45,7 +45,9 @@ class CartController extends Controller
             ]
         ]);
 
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+        return redirect()->back()
+            ->with('success', 'Produk berhasil ditambahkan!')
+            ->with('showCartButton', true); // <-- Sinyal Khusus
     }
 
     /**

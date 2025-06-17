@@ -5,14 +5,6 @@
     <div class="container my-5">
         <h2 class="mb-4">Keranjang Belanja Anda</h2>
 
-        {{-- Tampilkan notifikasi jika ada --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
         {{-- Cek apakah keranjang ada isinya --}}
         @if (Cart::count() > 0)
             <div class="row">

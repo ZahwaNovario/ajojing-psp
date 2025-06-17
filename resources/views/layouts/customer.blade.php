@@ -45,3 +45,48 @@
 </body>
 
 </html>
+
+@if (session('success'))
+    <script>
+        // Cek apakah ada sinyal dari controller untuk menampilkan tombol keranjang
+        @if (session('showCartButton'))
+
+            // Jika YA, tampilkan notifikasi dengan tombol
+            Swal.fire({
+                toast: true,
+                position: 'bottom',
+                icon: 'success',
+                title: '{{ session('success') }}',
+                showConfirmButton: true, // Tampilkan tombol
+                confirmButtonText: '<i class="ti ti-shopping-cart me-2"></i> Lihat Keranjang',
+                confirmButtonColor: '#0d6efd', // Warna biru Bootstrap
+                showCloseButton: true, // Tampilkan tombol close 'x'
+            }).then((result) => {
+                // Jika tombol 'Lihat Keranjang' diklik
+                if (result.isConfirmed) {
+                    // Arahkan pengguna ke halaman keranjang
+                    window.location.href = '{{ route('cart.index') }}';
+                }
+            });
+        @else
+
+            // Jika TIDAK, tampilkan notifikasi biasa yang hilang otomatis setelah 3 detik
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'center',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success') }}'
+            });
+        @endif
+    </script>
+@endif
