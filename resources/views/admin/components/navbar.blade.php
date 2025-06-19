@@ -51,17 +51,19 @@
                     @endrole
                 </li>
 
-                <li class="pc-item pc-caption">
-                    <label>Log Activity</label>
-                    <i class="ti ti-dashboard"></i>
-                </li>
+                @role('admin')
+                    <li class="pc-item pc-caption">
+                        <label>Log Activity</label>
+                        <i class="ti ti-dashboard"></i>
+                    </li>
 
-                <li class="pc-item">
-                    <a href="{{ route('admin.activity-log.login-log.index') }}" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-login"></i></span>
-                        <span class="pc-mtext">User Logs</span>
-                    </a>
-                </li>
+                    <li class="pc-item">
+                        <a href="{{ route('admin.activity-log.login-log.index') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-login"></i></span>
+                            <span class="pc-mtext">User Logs</span>
+                        </a>
+                    </li>
+                @endrole
             </ul>
         </div>
     </div>
