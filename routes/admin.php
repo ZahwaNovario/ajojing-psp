@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\BarangController;
@@ -18,7 +19,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role404:admin'])->g
     Route::resource('barang', BarangController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::delete('barang/gambar/{id}/{filename}', [BarangController::class, 'deleteImage'])->name('barang.image.delete');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('order.index');
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/login-log', [ActivityLogController::class, 'index'])->name('activity-log.login-log.index');
 });
 
 // Pegawai

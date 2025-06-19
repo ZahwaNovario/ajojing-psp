@@ -52,37 +52,39 @@
                                     </form>
                                 </div>
                             </div>
-
+                            <!-- Modal Konfirmasi -->
+                            <div class="modal fade" id="konfirmasiModal{{ $order->id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <form action="{{ route('pegawai.order.konfirmasi', $order) }}" method="POST"
+                                        class="modal-content">
+                                        @csrf
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Konfirmasi Pesanan</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Apakah Anda yakin ingin <strong>mengonfirmasi</strong> pesanan ini?</p>
+                                            <ul>
+                                                <li><strong>Kode:</strong> {{ $order->kode }}</li>
+                                                <li><strong>Customer:</strong> {{ $order->user->name ?? '-' }}</li>
+                                                <li><strong>Total:</strong>
+                                                    Rp{{ number_format($order->total_harga ?? 0, 0, ',', '.') }}</li>
+                                            </ul>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Ya, Konfirmasi</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
             @empty
                 <p class="text-muted">Tidak ada pesanan yang menunggu verifikasi.</p>
             @endforelse
-        </div>
-    </div>
-
-    <!-- Modal Konfirmasi -->
-    <div class="modal fade" id="konfirmasiModal{{ $order->id }}" tabindex="-1">
-        <div class="modal-dialog">
-            <form action="{{ route('pegawai.order.konfirmasi', $order) }}" method="POST" class="modal-content">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Konfirmasi Pesanan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Apakah Anda yakin ingin <strong>mengonfirmasi</strong> pesanan ini?</p>
-                    <ul>
-                        <li><strong>Kode:</strong> {{ $order->kode }}</li>
-                        <li><strong>Customer:</strong> {{ $order->user->name ?? '-' }}</li>
-                        <li><strong>Total:</strong> Rp{{ number_format($order->total_harga ?? 0, 0, ',', '.') }}</li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Ya, Konfirmasi</button>
-                </div>
-            </form>
         </div>
     </div>
 @endsection

@@ -81,7 +81,7 @@
                     enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Konfirmasi Pesanan #{{ $order->id }}</h5>
+                        <h5 class="modal-title">Konfirmasi Pesanan #{{ $order->uuid }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -90,8 +90,17 @@
                         <p>Silakan transfer ke rekening BCA <strong>123-456-7890</strong> a/n Ajojing Store.</p>
                         <hr>
                         <div class="mb-3">
-                            <label for="bukti_pembayaran" class="form-label">Upload Bukti Transfer</label>
-                            <input type="file" name="bukti_pembayaran" class="form-control" required>
+                            <label for="bukti_pembayaran_{{ $order->id }}" class="form-label">Upload Bukti
+                                Transfer</label>
+                            <input type="file" name="bukti_pembayaran" id="bukti_pembayaran_{{ $order->id }}"
+                                class="form-control @error('bukti_pembayaran') is-invalid @enderror"
+                                accept="image/png, image/jpeg, image/jpg" required>
+
+                            @error('bukti_pembayaran')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -101,4 +110,23 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+
+        <script>
+            @if ($errors->any())
+                let errorMessages = '<ul class="list-unstyled text-start ps-3">';
+                errorMessages +=
+                    '<li class="mb-1"><i class="ti ti-alert-circle text-danger me-2"></i>Upload gagal! Pastikan file adalah gambar (JPG/PNG) dan ukurannya tidak lebih dari 2MB.</li>';
+                errorMessages += '</ul>';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops! Ada yang Salah',
+                    html: errorMessages,
+                    confirmButtonText: 'Saya Mengerti',
+                    confirmButtonColor: '#d33'
+                });
+            @endif
+        </script>
+    @endpush
 @endsection

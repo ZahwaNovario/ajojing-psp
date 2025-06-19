@@ -8,12 +8,13 @@
 
         <div class="card-body">
             <div class="table-responsive">
-                 <table class="table table-striped table-hover" id="orderTable">
+                <table class="table table-striped table-hover" id="orderTable">
                     <thead>
                         <tr>
                             <th>Kode</th>
                             <th>Customer</th>
                             <th>Status</th>
+                            <th>Konfirmasi</th>
                             <th>Total</th>
                             <th>Waktu</th>
                         </tr>
@@ -24,13 +25,17 @@
                                 <td>{{ $order->kode }}</td>
                                 <td>{{ $order->user->name ?? '-' }}</td>
                                 <td>{{ $order->status }}</td>
+                                <td>
+                                    @if ($order->processor)
+                                        {{ $order->processor->name }}
+                                    @else
+                                        <span class="text-muted fst-italic">Belum Diproses</span>
+                                    @endif
+                                </td>
                                 <td>Rp. {{ number_format($order->total_harga, 0, ',', '.') }}</td>
                                 <td>{{ $order->created_at->format('d M Y H:i') }}</td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-4">Belum ada pesanan</td>
-                            </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -45,7 +50,9 @@
             $('#orderTable').DataTable({
                 responsive: true,
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/eng.json'
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/eng.json',
+                    emptyTable: "Belum ada data order.",
+                    zeroRecords: "Tidak ditemukan hasil pencarian."
                 },
                 order: [
                     [4, 'desc']

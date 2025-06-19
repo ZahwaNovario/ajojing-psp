@@ -77,10 +77,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">Belum ada data barang. Silakan
-                                    tambahkan barang baru.</td>
-                            </tr>
+
                         @endforelse
                     </tbody>
                 </table>

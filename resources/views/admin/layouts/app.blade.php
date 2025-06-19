@@ -136,7 +136,9 @@
             responsive: {
                 details: {
                     display: $.fn.dataTable.Responsive.display.childRowImmediate,
-                    type: ''
+                    type: '',
+                    emptyTable: "Belum ada data pengguna.",
+                    zeroRecords: "Tidak ditemukan hasil pencarian."
                 }
             }
         });

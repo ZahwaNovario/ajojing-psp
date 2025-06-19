@@ -7,9 +7,52 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
+/**
+ * 
+ *
+ * @property int $id
+ * @property string|null $uuid
+ * @property string $kode
+ * @property int|null $user_id
+ * @property int|null $processed_by_user_id
+ * @property string $status
+ * @property int $total_harga
+ * @property string $alamat_pengiriman
+ * @property string|null $nomor_resi
+ * @property string|null $catatan_pembeli
+ * @property string|null $bukti_pembayaran
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
+ * @property-read int|null $activities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderDetail> $details
+ * @property-read int|null $details_count
+ * @property-read \App\Models\User|null $processor
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereAlamatPengiriman($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereBuktiPembayaran($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCatatanPembeli($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereKode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereNomorResi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereProcessedByUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereTotalHarga($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUuid($value)
+ * @mixin \Eloquent
+ */
 class Order extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, LogsActivity;
 
     /**
      * [BARU] Beritahu Eloquent bahwa 'id' tetap auto-increment.
@@ -99,5 +142,13 @@ class Order extends Model
         } while (self::where('kode', $kode)->exists());
 
         return $kode;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['status', 'nomor_resi']) // Kita ingin tahu saat status & resi berubah
+            ->setDescriptionForEvent(fn(string $eventName) => "Pesanan ini telah di-{$eventName}")
+            ->useLogName('Order');
     }
 }

@@ -52,14 +52,14 @@
                 </li>
 
                 <li class="pc-item pc-caption">
-                    <label>UI Components</label>
+                    <label>Log Activity</label>
                     <i class="ti ti-dashboard"></i>
                 </li>
 
                 <li class="pc-item">
-                    <a href="../elements/bc_typography.html" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-typography"></i></span>
-                        <span class="pc-mtext">Typography</span>
+                    <a href="{{ route('admin.activity-log.login-log.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-login"></i></span>
+                        <span class="pc-mtext">User Logs</span>
                     </a>
                 </li>
             </ul>
