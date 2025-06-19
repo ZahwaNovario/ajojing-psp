@@ -11,7 +11,7 @@
                     <div class="p-3 mb-3 border rounded">
                         <div class="row align-items-center">
                             <div class="col-md-3">
-                                <h6 class="mb-0">Order #{{ $order->id }}</h6>
+                                <h6 class="mb-0">Order #{{ $order->kode }}</h6>
                                 <small class="text-muted">{{ $order->created_at->format('d F Y') }}</small>
                             </div>
                             <div class="col-md-3">

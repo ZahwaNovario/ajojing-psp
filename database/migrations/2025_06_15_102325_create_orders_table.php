@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
         $table->id();
+        $table->string('kode')->unique();
 
         // Relasi ke user yang memesan. Jika user dihapus, order tetap ada (user_id jadi NULL).
         $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();

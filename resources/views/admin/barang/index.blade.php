@@ -65,7 +65,7 @@
                                         </button>
 
                                         <form action="{{ route('admin.barang.destroy', $barang->id) }}" method="POST"
-                                            class="d-inline">
+                                            class="d-inline delete-barang-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger btn-delete"
@@ -182,6 +182,30 @@
 
     @push('scripts')
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Tombol hapus barang
+                document.querySelectorAll('.delete-barang-form').forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault(); // Stop default submit
+
+                        Swal.fire({
+                            title: 'Yakin ingin menghapus?',
+                            text: "Barang yang dihapus tidak dapat dikembalikan.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Ya, hapus!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit(); // Lanjutkan submit
+                            }
+                        });
+                    });
+                });
+            });
+
             /**
              * @deskripsi Fungsi ini untuk menambah input file baru secara dinamis.
              * @param {string} containerId - ID dari div yang akan menampung input baru.

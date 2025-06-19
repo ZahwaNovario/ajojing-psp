@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -79,5 +80,24 @@ class Order extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($order) {
+            $order->kode = static::generateKode();
+        });
+    }
+
+    public static function generateKode()
+    {
+        do {
+            $prefix = 'ORD';
+            $tanggal = now()->format('Ymd');
+            $random = strtoupper(Str::random(6));
+            $kode = "{$prefix}-{$tanggal}-{$random}";
+        } while (self::where('kode', $kode)->exists());
+
+        return $kode;
     }
 }
