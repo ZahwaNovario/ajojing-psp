@@ -21,6 +21,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role404:admin'])->g
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('order.index');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/login-log', [ActivityLogController::class, 'index'])->name('activity-log.login-log.index');
+    Route::get('/items-log', [ActivityLogController::class, 'itemLog'])->name('activity-log.items-log.index'); // Log Barang
 });
 
 // Pegawai

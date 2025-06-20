@@ -13,7 +13,7 @@ use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $nama
@@ -69,11 +69,24 @@ class Barang extends Model
         });
     }
 
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     return LogOptions::defaults()
+    //         ->logOnly(['nama', 'stok', 'harga']) // Hanya catat perubahan pada kolom ini
+    //         ->setDescriptionForEvent(fn(string $eventName) => "Produk ini telah di-{$eventName}")
+    //         ->useLogName('Product');
+    // }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['nama', 'stok', 'harga']) // Hanya catat perubahan pada kolom ini
+            // Memberitahu Spatie untuk hanya peduli pada perubahan di kolom-kolom ini.
+            ->logOnly(['nama', 'stok', 'harga', 'deskripsi'])
+            // Ini akan menyimpan nilai LAMA dan BARU saat ada 'update'. Sangat penting!
+            ->logOnlyDirty()
+            // Membuat deskripsi log yang dinamis.
             ->setDescriptionForEvent(fn(string $eventName) => "Produk ini telah di-{$eventName}")
+            // Memberi label 'Product' untuk semua log dari model ini, agar mudah difilter.
             ->useLogName('Product');
     }
 }
