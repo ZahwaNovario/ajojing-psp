@@ -7,8 +7,8 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
+                <table class="table table-striped table-hover" id="loginLogTable">
+                    <thead class="table-info">
                         <tr>
                             <th>Tanggal</th>
                             <th>Aktivitas</th>
@@ -19,7 +19,7 @@
                     </thead>
                     <tbody>
                         @forelse ($activities as $activity)
-                            <tr>
+                            <tr class="table-secondary">
                                 <td>
                                     {{-- Waktu Relatif (mudah dibaca) --}}
                                     <span class="fw-bold">{{ $activity->created_at->diffForHumans() }}</span>
@@ -72,9 +72,24 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3">
-                {{ $activities->links() }}
-            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#loginLogTable').DataTable({
+                responsive: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/eng.json',
+                    emptyTable: "Belum ada data order.",
+                    zeroRecords: "Tidak ditemukan hasil pencarian."
+                },
+                order: [
+                    [4, 'desc']
+                ]
+            });
+        });
+    </script>
+@endpush

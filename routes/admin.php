@@ -20,14 +20,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role404:admin'])->g
     Route::delete('barang/gambar/{id}/{filename}', [BarangController::class, 'deleteImage'])->name('barang.image.delete');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('order.index');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/orders/{order}/details', [AdminOrderController::class, 'getDetailsJson'])->name('orders.details.json');
     Route::get('/login-log', [ActivityLogController::class, 'index'])->name('activity-log.login-log.index');
-    Route::get('/items-log', [ActivityLogController::class, 'itemLog'])->name('activity-log.items-log.index'); // Log Barang
+    Route::get('/items-log', [ActivityLogController::class, 'itemLog'])->name('activity-log.items-log.index');
 });
 
 // Pegawai
 Route::prefix('pegawai')->name('pegawai.')->middleware(['auth', 'role404:pegawai'])->group(function () {
     Route::resource('barang', BarangController::class)->only(['index']);
     Route::get('/order', [PegawaiOrderController::class, 'index'])->name('order.index');
+    Route::get('/orderlist', [PegawaiOrderController::class, 'daftarPesanan'])->name('order.list');
     Route::post('/order/{order}/konfirmasi', [PegawaiOrderController::class, 'konfirmasi'])->name('order.konfirmasi');
     Route::post('/order/{order}/tolak', [PegawaiOrderController::class, 'tolak'])->name('order.tolak');
+    Route::post('/order/{order}/ship', [PegawaiOrderController::class, 'ship'])->name('orders.ship');
 });

@@ -39,24 +39,19 @@ class BarangController extends Controller
             'deskripsi' => 'nullable|string',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
-            'gambar' => 'nullable|array', // Sebaiknya 'required' jika gambar wajib
+            'gambar' => 'nullable|array',
             'gambar.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $barang = Barang::create($request->only('nama', 'deskripsi', 'stok', 'harga'));
 
         if ($request->hasFile('gambar')) {
-            // Kita gunakan $key untuk melacak urutan gambar
             foreach ($request->file('gambar') as $key => $file) {
-                // Membuat nama file unik (kode Anda sudah bagus)
                 $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-                // Menyimpan file fisik
                 $file->storeAs("barang/{$barang->id}", $filename, 'public');
 
-                // ==========================================================
-                // BAGIAN INI DITAMBAHKAN UNTUK MENYIMPAN KE DATABASE IMAGES
-                // ==========================================================
+
                 Image::create([
                     'barang_id' => $barang->id,
                     'path' => "barang/{$barang->id}/{$filename}", // Simpan path bersihnya

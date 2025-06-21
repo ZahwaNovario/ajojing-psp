@@ -41,15 +41,24 @@
                     @role('admin')
                         <a href="{{ route('admin.order.index') }}" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-clipboard-list"></i></span>
-                            <span class="pc-mtext">Order</span>
+                            <span class="pc-mtext">Pesanan</span>
                         </a>
                         @elserole('pegawai')
                         <a href="{{ route('pegawai.order.index') }}" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-clipboard-list"></i></span>
-                            <span class="pc-mtext">Order</span>
+                            <span class="pc-mtext">Pesanan Baru</span>
                         </a>
                     @endrole
                 </li>
+
+                @role('pegawai')
+                    <li class="pc-item">
+                        <a href="{{ route('pegawai.order.list') }}" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-clipboard-list"></i></span>
+                            <span class="pc-mtext">Pesanan Diproses</span>
+                        </a>
+                    </li>
+                @endrole
 
                 @role('admin')
                     <li class="pc-item pc-caption">
