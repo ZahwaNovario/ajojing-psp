@@ -36,6 +36,11 @@ class SecureHeaders
      */
     private function setStrictCsp(Response $response): void
     {
+
+        $viteHost = env('VITE_HMR_HOST', 'localhost');
+        $vitePort = env('VITE_PORT', '5173');
+        $viteUrl = "http://{$viteHost}:{$vitePort}";
+
         $policy = "default-src 'self';";
         $policy .= " script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;";
         $policy .= " style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net https://cdn.jsdelivr.net;";
