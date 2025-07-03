@@ -28,6 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\SecureHeaders::class,
+            // \App\Http\Middleware\ForceHttps::class,
+        ]);
+        $middleware->appendToGroup('api', [
+            \App\Http\Middleware\SecureApiHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
